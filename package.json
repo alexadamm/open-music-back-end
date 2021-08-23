@@ -1,0 +1,29 @@
+{
+  "name": "openmusic-app-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start-dev": "nodemon ./src/server.js",
+    "lint": "eslint ./src --fix && eslint ./migrations --fix",
+    "migrate": "node-pg-migrate"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.24.1",
+    "nodemon": "^2.0.12"
+  },
+  "dependencies": {
+    "@hapi/hapi": "^20.1.5",
+    "auto-bind": "^4.0.0",
+    "dotenv": "^10.0.0",
+    "joi": "^17.4.2",
+    "nanoid": "^3.1.25",
+    "node-pg-migrate": "^5.10.0",
+    "pg": "^8.7.1"
+  }
+}
