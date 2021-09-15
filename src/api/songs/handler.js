@@ -1,5 +1,5 @@
 const autoBind = require('auto-bind');
-const errorHandler = require('./errorHandler');
+const errorHandler = require('../errorHandler');
 
 class SongsHandler {
   constructor(service, validator) {
