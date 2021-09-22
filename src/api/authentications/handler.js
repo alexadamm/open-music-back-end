@@ -2,12 +2,7 @@ const autoBind = require('auto-bind');
 const errorHandler = require('../errorHandler');
 
 class AuthenticationsHandler {
-  constructor(
-    authenticationsService,
-    usersService,
-    tokenManager,
-    validator,
-  ) {
+  constructor(authenticationsService, usersService, tokenManager, validator) {
     this._authenticationsService = authenticationsService;
     this._usersService = usersService;
     this._tokenManager = tokenManager;
@@ -20,7 +15,8 @@ class AuthenticationsHandler {
     try {
       this._validator.validatePostAuthenticationPayload(request.payload);
       const { username, password } = request.payload;
-      const id = await this._usersService.verifyUserCredentials(username, password);
+
+      const id = await this._usersService.verifyUserCredential({ username, password });
 
       const accessToken = await this._tokenManager.generateAccessToken({ id });
       const refreshToken = await this._tokenManager.generateRefreshToken({ id });
@@ -68,13 +64,12 @@ class AuthenticationsHandler {
     try {
       this._validator.validateDeleteAuthenticationPayload(request.payload);
       const { refreshToken } = request.payload;
-
       await this._authenticationsService.verifyRefreshToken(refreshToken);
       await this._authenticationsService.deleteRefreshToken(refreshToken);
 
       return {
         status: 'success',
-        message: 'Referesh token berhasil dihapus',
+        message: 'Refresh token berhasil dihapus',
       };
     } catch (e) {
       return errorHandler(e, h);

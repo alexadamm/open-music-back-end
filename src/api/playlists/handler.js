@@ -12,6 +12,7 @@ class PlaylistsHandler {
   async postPlaylistHandler(request, h) {
     try {
       this._validator.validatePostPlaylistPayload(request.payload);
+
       const { name } = request.payload;
       const { id: credentialId } = request.auth.credentials;
 
@@ -31,33 +32,16 @@ class PlaylistsHandler {
     }
   }
 
-  async getPlaylistsHandler(request, h) {
+  async getPlaylistsByCredentialIdHandler(request, h) {
     try {
       const { id: credentialId } = request.auth.credentials;
-      const playlists = await this._playlistsService.getPlaylists(credentialId);
 
+      const playlists = await this._playlistsService.getPlaylistsByOwnerId(credentialId);
       return {
         status: 'success',
         data: {
           playlists,
         },
-      };
-    } catch (e) {
-      return errorHandler(e, h);
-    }
-  }
-
-  async deletePlaylistByPlaylistIdHandler(request, h) {
-    try {
-      const { playlistId } = request.params;
-      const { id: credentialId } = request.auth.credentials;
-
-      await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
-      await this._playlistsService.deletePlaylistByPlaylistId(playlistId);
-
-      return {
-        status: 'success',
-        message: 'Playlist berhasil dihapus',
       };
     } catch (e) {
       return errorHandler(e, h);

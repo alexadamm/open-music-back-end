@@ -40,14 +40,14 @@ const init = async () => {
     },
   });
 
-  // external plugin registration
+  // plugin eksternal
   await server.register([
     {
       plugin: Jwt,
     },
   ]);
 
-  await server.auth.strategy('musicapp_jwt', 'jwt', {
+  server.auth.strategy('openmusic_jwt', 'jwt', {
     keys: process.env.ACCESS_TOKEN_KEY,
     verify: {
       aud: false,
