@@ -81,7 +81,7 @@ class SongsService {
     const result = await this._pool.query(query);
 
     if (!result) {
-      throw new NotFoundError('Gagal melakukan operasi. Id tidak ditemukan');
+      throw new NotFoundError('Gagal melakukan operasi. Lagu tidak ditemukan');
     }
   }
 }

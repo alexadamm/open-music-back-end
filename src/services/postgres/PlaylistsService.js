@@ -31,7 +31,10 @@ class PlaylistsService {
           FROM playlists
           INNER JOIN users
           ON users.id = playlists.owner
+          LEFT JOIN collaborations
+          ON collaborations.playlist_id = playlists.id
           WHERE playlists.owner = $1
+          OR collaborations.user_id = $1
           `,
       values: [credentialId],
     };
@@ -61,6 +64,26 @@ class PlaylistsService {
     }
   }
 
+  async verifyPlaylistAccess({ playlistId, credentialId }) {
+    const query = {
+      text: `SELECT playlists.id
+      FROM playlists
+      INNER JOIN users
+      ON users.id = playlists.owner
+      LEFT JOIN collaborations
+      ON collaborations.playlist_id = playlists.id
+      WHERE (playlists.owner = $1 OR collaborations.user_id = $1)
+      AND playlists.id = $2`,
+      values: [credentialId, playlistId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows[0]) {
+      throw new AuthorizationError('Gagal melakukan operasi. Anda bukan pemilik/kolaborator dari playlist ini.');
+    }
+  }
+
   async verifyPlaylistExistance(playlistId) {
     const query = {
       text: 'SELECT COUNT(1) FROM playlists WHERE id = $1',
@@ -70,7 +93,7 @@ class PlaylistsService {
     const result = await this._pool.query(query);
 
     if (!result) {
-      throw new NotFoundError('Gagal melakukan operasi. Id tidak ditemukan');
+      throw new NotFoundError('Gagal melakukan operasi. Playlist tidak ditemukan');
     }
   }
 }
