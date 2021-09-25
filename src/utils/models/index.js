@@ -39,18 +39,6 @@ class SongModel {
     return anArray;
   }
 
-  instanceToArray4ExistingEntry() {
-    return [
-      this.title,
-      this.year,
-      this.performer,
-      this.genre,
-      this.duration,
-      this.updatedAt,
-      this.id,
-    ];
-  }
-
   static mapDBToModel(db) {
     const model = {
       ...db,
