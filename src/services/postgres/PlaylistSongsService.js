@@ -3,8 +3,9 @@ const { Pool } = require('pg');
 const InvariantError = require('../../exceptions/InvariantError');
 
 class PlaylistSongsService {
-  constructor() {
+  constructor(cacheService) {
     this._pool = new Pool();
+    this._cacheService = cacheService;
   }
 
   async addSongToPlaylist({ songId, playlistId }) {
@@ -20,9 +21,15 @@ class PlaylistSongsService {
     if (!result.rows.length) {
       throw new InvariantError('Lagu gagal ditambahkan kedalam playlist');
     }
+
+    this._cacheService.delete(`playlistSongs:${playlistId}`);
   }
 
   async getSongsFromPlaylistByPlaylistId(playlistId) {
+    const cacheResult = await this._cacheService.get(`playlistSongs:${playlistId}`);
+    if (cacheResult) {
+      return cacheResult;
+    }
     const query = {
       text: `SELECT songs.id, songs.title, songs.performer
           FROM playlistsongs
@@ -39,6 +46,8 @@ class PlaylistSongsService {
     if (!result.rows) {
       throw new InvariantError('Gagal mendapatkan lagu-lagu dari playlist');
     }
+
+    await this._cacheService.set(`playlistSongs:${playlistId}`, JSON.stringify(result.rows));
     return result.rows;
   }
 
@@ -53,6 +62,8 @@ class PlaylistSongsService {
     if (!result.rows.length) {
       throw new InvariantError('Lagu gagal dihapus dari playlist');
     }
+
+    this._cacheService.delete(`playlistSongs:${playlistId}`);
   }
 }
 
