@@ -33,9 +33,9 @@ class PlaylistSongsService {
     const query = {
       text: `SELECT songs.id, songs.title, songs.performer
           FROM playlistsongs
-          INNER JOIN playlists
+          LEFT JOIN playlists
           ON playlists.id = playlistsongs.playlist_id
-          INNER JOIN songs
+          LEFT JOIN songs
           ON songs.id = playlistsongs.song_id
           WHERE playlistsongs.playlist_id = $1`,
       values: [playlistId],
@@ -63,7 +63,7 @@ class PlaylistSongsService {
       throw new InvariantError('Lagu gagal dihapus dari playlist');
     }
 
-    this._cacheService.delete(`playlistSongs:${playlistId}`);
+    await this._cacheService.delete(`playlistSongs:${playlistId}`);
   }
 }
 

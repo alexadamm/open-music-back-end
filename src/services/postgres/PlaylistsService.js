@@ -22,13 +22,12 @@ class PlaylistsService {
     if (!result.rows.length) {
       throw new InvariantError('Playlist gagal ditambahkan');
     }
-
-    this._cacheService.delete(`playlists:${credentialId}`);
+    await this._cacheService.delete(`playlistList:${credentialId}`);
     return result.rows[0].id;
   }
 
   async getPlaylistsByCredentialId(credentialId) {
-    const cacheResult = await this._cacheService.get(`playlists:${credentialId}`);
+    const cacheResult = await this._cacheService.get(`PlaylistList:${credentialId}`);
     if (cacheResult) {
       return cacheResult;
     }
@@ -36,7 +35,7 @@ class PlaylistsService {
       text: `
           SELECT playlists.id, playlists.name, users.username
           FROM playlists
-          INNER JOIN users
+          LEFT JOIN users
           ON users.id = playlists.owner
           LEFT JOIN collaborations
           ON collaborations.playlist_id = playlists.id
@@ -47,18 +46,18 @@ class PlaylistsService {
     };
     const result = await this._pool.query(query);
 
-    await this._cacheService.set(`playlists:${credentialId}`, JSON.stringify(result.rows));
+    await this._cacheService.set(`playlistsList:${credentialId}`, JSON.stringify(result.rows));
     return result.rows;
   }
 
-  async deletePlaylistByPlaylistId({ playlistId, credentialId }) {
+  async deletePlaylistByPlaylistId(playlistId, credentialId) {
     const query = {
       text: 'DELETE FROM playlists where id = $1',
       values: [playlistId],
     };
 
     await this._pool.query(query);
-    this._cacheService.delete(`playlists:${credentialId}`);
+    await this._cacheService.delete(`playlistList:${credentialId}`);
   }
 
   async verifyPlaylistOwner({ playlistId, credentialId }) {

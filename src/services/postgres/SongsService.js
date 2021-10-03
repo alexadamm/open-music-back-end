@@ -23,7 +23,7 @@ class SongsService {
       throw new InvariantError('Lagu gagal ditambahkan');
     }
 
-    this._cacheService.delete('songs:all');
+    await this._cacheService.delete('songs:all');
     return result.rows[0].id;
   }
 
@@ -72,8 +72,8 @@ class SongsService {
       throw new NotFoundError('Gagal memperbarui lagu. Id tidak ditemukan');
     }
 
-    this._cacheService.delete(`songs:${id}`);
-    this._cacheService.delete('songs:all');
+    await this._cacheService.delete(`songs:${id}`);
+    await this._cacheService.delete('songs:all');
   }
 
   async deleteSongById(id) {
@@ -88,8 +88,8 @@ class SongsService {
       throw new NotFoundError('Lagu gagal dihapus. Id tidak ditemukan');
     }
 
-    this._cacheService.delete(`songs:${id}`);
-    this._cacheService.delete('songs:all');
+    await this._cacheService.delete(`songs:${id}`);
+    await this._cacheService.delete('songs:all');
   }
 
   async verifySongExistance(songId) {

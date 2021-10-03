@@ -37,7 +37,7 @@ class CollaborationsService {
       throw new InvariantError('User gagal dihapus dari kolaborasi');
     }
 
-    await this._cacheService.delete(`playlists:${userId}`);
+    await this._cacheService.delete(`playlistList:${userId}`);
   }
 }
 

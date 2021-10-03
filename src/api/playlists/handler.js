@@ -57,7 +57,7 @@ class PlaylistsHandler {
 
       await this._playlistsService.verifyPlaylistExistance(playlistId);
       await this._playlistsService.verifyPlaylistOwner({ playlistId, credentialId });
-      await this._playlistsService.deletePlaylistByPlaylistId({ playlistId, credentialId });
+      await this._playlistsService.deletePlaylistByPlaylistId(playlistId, credentialId);
 
       return {
         status: 'success',
